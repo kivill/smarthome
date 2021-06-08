@@ -1,0 +1,64 @@
+version: "3"
+services:
+  # nginx:
+  #   container_name: nginx
+  #   depends_on:
+  #     - db
+  #     - api
+  #     - frontend
+  #   build: ./nginx
+  #   ports:
+  #     - "8888:8888"
+
+  # api:
+  #   container_name: api
+  #   depends_on:
+  #     - db
+  #   restart: always
+  #   build: ./api
+  #   environment:
+  #     - MONGO_URI=mongodb://user:2665640@db_doge/doge?authSource=admin
+  #     - JWT_SECRET=9gaT2XQQ4Vs5d7yC
+  #     - JWT_EXPIRATION=7d
+  #     - ENCRYPT_JWT_SECRET=krtPfHDRjkTaA9pR
+  #   volumes:
+  #     - .:/usr/src/app
+  #     - /usr/src/app/node_modules
+
+  # frontend:
+  #   container_name: frontend
+  #   depends_on:
+  #     - api
+  #   restart: always
+  #   build: ./frontend
+  #   environment:
+  #     - NODE_ENV=production
+  #     - VUE_ROUTER_MODE=history
+
+  db:
+    container_name: db_doge
+    build: ./mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - db_doge_volume:/data/db
+
+  mosquitto:
+    image: eclipse-mosquitto
+    ports:
+      - 1883:1883
+      - 8883:8883
+    volumes:
+      - mosquitto-data:/mosquitto/data
+      - mosquitto-logs:/mosquitto/logs
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+
+volumes:
+  db_doge_volume:
+  mosquitto-data:
+  mosquitto-logs:
+  mosquitto-conf:
+
+networks:
+  webnet:
