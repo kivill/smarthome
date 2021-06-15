@@ -20,9 +20,7 @@ export class SensorReading {
     sensorId: Sensor;
 
     @Prop({
-        minlength: 6,
-        maxlength: 255,
-        required: [true, 'NAME_IS_BLANK']
+        required: [true, 'READING_IS_BLANK']
     })
     reading: number;
 }

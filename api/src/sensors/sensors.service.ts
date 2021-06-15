@@ -45,12 +45,15 @@ export class SensorsService {
   }
 
   async getSensorData(data: SensorMessageDto) {
-    console.log(data)
-    const sensor = await this.sensorModel.findOne({ $and:[{sensorId: data.sensorId}, {deviceId: data.deviceId}] });
+    const sensor = await this.sensorModel.findOne({
+      $and:[{sensorId: data.sensorId}, {deviceId: data.deviceId}]
+    });
     if (!sensor) {
       await this.sensorModel.create(data)
     } else {
-      await this.sensorReadingModel.create({sensorId: sensor, reading: data.value})
+      await this.sensorReadingModel.create({
+        sensorId: sensor, reading: data.value
+      })
     }
   }
 }
