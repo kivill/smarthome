@@ -22,12 +22,12 @@ export class TriggersController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.triggersService.findOne(+id);
+    return this.triggersService.findOne(id);
   }
 
   @Put(':id')
   update(@Param('id') id: string, @Body() updateTriggerDto: UpdateTriggerDto) {
-    return this.triggersService.update(+id, updateTriggerDto);
+    return this.triggersService.update(id, updateTriggerDto);
   }
 
   @MessagePattern('esp32/output')

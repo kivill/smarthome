@@ -28,22 +28,23 @@ export class TriggersService {
   }
 
   async findAll() {
-    return await this.triggerModel.find();
+    return await this.triggerModel.find().populate('sensorId', { _id: 1, deviceId: 1, sensorId: 1 });
   }
 
   async findJobs() {
-    return await this.jobModel.find();
+    return await this.jobModel.find().populate('sensorReadingId', { _id: 1, reading: 1 });
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const trigger = await this.triggerModel.findOne({ _id: id })
+    console.log(trigger);
     if (!trigger) {
       throw new NotFoundException('Point not found.');
     }
     return trigger;
   }
 
-  async update(id: number, updateTriggerDto: UpdateTriggerDto) {
+  async update(id: string, updateTriggerDto: UpdateTriggerDto) {
     const trigger = await this.triggerModel.findOne({ _id: id })
     if (!trigger) {
       throw new NotFoundException('Point not found.');

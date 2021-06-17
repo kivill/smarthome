@@ -2,7 +2,7 @@
   <div class="q-pa-md">
     <q-table
       :loading="isLoading"
-      title="Приложения"
+      title="Триггеры"
       :rows="apps"
       :columns="columns"
       row-key="_id"
@@ -14,52 +14,16 @@
 
       <template v-slot:header="props">
         <q-tr :props="props">
-          <q-th auto-width />
-          <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ col.label }}
-          </q-th>
-          <q-th auto-width> Количество карт </q-th>
+          <q-th v-for="col in props.cols" :key="col.name" :props="props">{{ col.label }}</q-th>
           <q-th auto-width />
         </q-tr>
       </template>
 
       <template v-slot:body="props">
         <q-tr :props="props">
+          <q-td v-for="col in props.cols" :key="col.name" :props="props">{{ col.value }}</q-td>
           <q-td auto-width>
-            <q-btn
-              size="sm"
-              color="primary"
-              round
-              dense
-              @click="props.expand = !props.expand"
-              :icon="props.expand ? 'expand_more' : 'chevron_right'"
-            />
-          </q-td>
-          <q-td v-for="col in props.cols" :key="col.name" :props="props">
-            {{ col.value }}
-          </q-td>
-          <q-td auto-width>
-            {{ props.row.cards.length }}
-          </q-td>
-          <q-td auto-width>
-            <q-btn
-              size="sm"
-              color="primary"
-              round
-              dense
-              @click="edit(props.row)"
-              icon="create"
-            />
-          </q-td>
-        </q-tr>
-        <q-tr v-show="props.expand" :props="props">
-          <q-td colspan="100%">
-            <div class="text-left">
-              Карточки:
-              <div v-for="card in props.row.cards" :key="card._id">
-                {{ card }}
-              </div>
-            </div>
+            <q-btn size="sm" color="primary" round dense @click="edit(props.row)" icon="create" />
           </q-td>
         </q-tr>
       </template>
@@ -67,90 +31,106 @@
   </div>
 
   <q-dialog v-model="modal" persistent>
-    <q-card>
+    <q-card style="min-width: 400px">
       <q-card-section v-if="!isCurrentLoading" class="items-center">
         <div class="row q-col-gutter-sm">
           <div class="col">
-            <q-input
-              v-model="currentApp.name"
-              label="Название"
-              :disable="currentApp._id ? true : false"
-            />
-          </div>
-          <div class="col">
             <q-select
-              v-model="currentApp.user"
-              :options="users"
-              label="Пользователь"
+              v-model="currentApp.sensorId"
+              :options="stats"
+              label="Сенсор"
               option-value="_id"
-              option-label="fullName"
+              option-label="sensorId"
               emit-value
               map-options
             />
-          </div>
-          <div class="col">
-            <q-select
-              v-model="currentApp.mfoService"
-              :options="mfoData"
-              label="Приложение"
-              option-value="_id"
-              option-label="name"
-              emit-value
-              map-options
-            />
-          </div>
-        </div>
-        <div class="row q-col-gutter-sm">
-          <div class="col">
-            <q-input v-model="currentApp.userId" label="ID пользователя" />
-          </div>
-          <div class="col">
-            <q-input v-model="currentApp.utmSource" label="utm_source" />
-          </div>
-          <div class="col">
-            <q-input v-model="currentApp.propertyId" label="Property ID" />
           </div>
         </div>
         <div class="row q-col-gutter-sm">
           <div class="col">
             <q-btn
               class="col"
-              label="Добавить карту"
+              label="Добавить ограничение"
               color="primary"
-              @click="currentApp.cards.push('')"
+              @click="currentApp.confines.push({
+                confine: '',
+                value: 0,
+              })"
             />
           </div>
         </div>
         <div class="row q-col-gutter-sm">
-          <div v-for="(card, index) in currentApp.cards" :key="index">
-            <q-input v-model="currentApp.cards[index]" label="Номер карты">
-              <template v-if="currentApp.cards[index]" v-slot:append>
-                <q-icon
-                  name="cancel"
-                  @click.stop="currentApp.cards.splice(index, 1)"
-                  class="cursor-pointer"
+          <div class="col">
+            <div
+              v-for="(card, index) in currentApp.confines"
+              :key="index"
+              class="row q-col-gutter-sm"
+            >
+              <div class="col-5">
+                <q-select
+                  dense
+                  v-model="currentApp.confines[index].confine"
+                  :options="['>', '<']"
+                  label="Ограничение"
                 />
-              </template>
-            </q-input>
+              </div>
+              <div class="col-5">
+                <q-input dense v-model="currentApp.confines[index].value" label="Значение" />
+              </div>
+              <div class="col">
+                <q-icon
+                  color="primary"
+                  @click.stop="currentApp.confines.splice(index, 1)"
+                  name="cancel"
+                  style="font-size: 32px;"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row q-col-gutter-sm">
+          <div class="col">
+            <q-btn
+              class="col"
+              label="Добавить команду"
+              color="primary"
+              @click="currentApp.jobs.push({
+                jobType: '',
+                jobInfo: 0,
+              })"
+            />
+          </div>
+        </div>
+        <div class="row q-col-gutter-sm">
+          <div class="col">
+            <div v-for="(card, index) in currentApp.jobs" :key="index" class="row q-col-gutter-sm">
+              <div class="col-5">
+                <q-select
+                  dense
+                  v-model="currentApp.jobs[index].jobType"
+                  :options="['light']"
+                  label="Команда"
+                />
+              </div>
+              <div class="col-5">
+                <q-input dense v-model="currentApp.jobs[index].jobInfo" label="Значение" />
+              </div>
+              <div class="col">
+                <q-icon
+                  color="primary"
+                  @click.stop="currentApp.jobs.splice(index, 1)"
+                  name="cancel"
+                  style="font-size: 32px;"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </q-card-section>
 
       <q-card-actions align="right">
-        <q-btn
-          flat
-          label="Отменить"
-          color="red"
-          @click="setCurrentAppEmpty"
-          v-close-popup
-        />
-        <q-btn
-          flat
-          label="Сохранить"
-          color="green"
-          @click="saveCurrent"
-          v-close-popup
-        />
+        <q-btn flat label="Отменить" color="red" @click="setCurrentAppEmpty" v-close-popup />
+        <q-btn flat label="Сохранить" color="green" @click="saveCurrent" v-close-popup />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -162,15 +142,31 @@ import { useApps } from '../apps';
 import { useUsers } from '../../app-modules';
 import { useMfo } from '../../app-modules';
 import { useAuth } from '../../app-modules';
+import { useGoogleAnalytics } from '../../app-modules';
+
+interface Sensor {
+  _id?: string;
+  deviceId: string;
+  sensorId: string;
+}
+
+interface Confines {
+  _id?: string;
+  confine: string;
+  value: number;
+}
+
+interface Job {
+  _id?: string;
+  jobType: string;
+  jobInfo: string;
+}
 
 interface App {
-  name: string;
-  utmSource: string;
-  userId: number;
-  cards: string[];
-  user: string;
-  mfoService: number;
-  propertyId: number;
+  _id?: string;
+  sensorId: string | Sensor;
+  confines: Confines[];
+  jobs: Job[];
 }
 interface User {
   _id?: string;
@@ -194,7 +190,9 @@ export default defineComponent({
     } = useApps();
     const { getUsers, users } = useUsers();
     const { getMfoStatus, mfoData } = useMfo();
+    const { getAnalyticsStats, stats } = useGoogleAnalytics();
     const { hasPermisson } = useAuth();
+    getAnalyticsStats();
     const columns = [
       {
         name: 'id',
@@ -203,22 +201,22 @@ export default defineComponent({
         align: 'left',
       },
       {
-        name: 'name',
-        field: 'name',
-        label: 'Название',
-        align: 'left',
-      },
-      {
         name: 'fullName',
-        field: (row: Row) => row.user.fullName,
-        format: (val: string) => `${val}`,
-        label: 'Пользователь',
+        field: (row: App) => row,
+        format: (val: App) => {
+          if (typeof val.sensorId == 'string') {
+            return val;
+          } else {
+            return `${val.sensorId.deviceId} ${val.sensorId.sensorId}`;
+          }
+        },
+        label: 'Сенсор',
         align: 'left',
       },
     ];
     getApps();
-    getUsers();
-    getMfoStatus();
+    // getUsers();
+    // getMfoStatus();
 
     let modal = ref(false);
     const add = () => {
@@ -231,6 +229,7 @@ export default defineComponent({
     };
     return {
       apps,
+      stats,
       columns,
       isLoading,
       isCurrentLoading,

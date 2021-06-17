@@ -5,23 +5,12 @@
         <div class="text-h6">Логин</div>
       </q-card-section>
       <q-card-section>
-        <q-input
-          type="email"
-          label="email"
-          required
-          autofocus
-          v-model="email"
-        />
-        <q-input
-          v-model="password"
-          type="password"
-          label="Пароль"
-          required
-          @keyup.enter="submit"
-        /><br />
+        <q-input type="email" label="email" required autofocus v-model="email" />
+        <q-input v-model="password" type="password" label="Пароль" required @keyup.enter="submit" />
+        <br />
       </q-card-section>
       <q-card-actions>
-        <q-btn color="primary" @click="submit"> Логин </q-btn>
+        <q-btn color="primary" @click="submit">Логин</q-btn>
       </q-card-actions>
     </q-card>
   </q-page>
@@ -45,7 +34,7 @@ export default defineComponent({
     const router = useRouter();
     const submit = async () => {
       await auth(payload);
-      await router.push({ name: 'spendings_by_card' });
+      await router.push({ name: 'stats' });
     };
     return {
       logout,

@@ -70,13 +70,7 @@ export const useEvents = () => {
     }
     api.get('/job', { params })
       .then(({ data }) => {
-        console.log(data)
-        state.data = data as Event[]
-        // state.pagination = {
-        //   page: data.page,
-        //   rowsNumber: data.rowsNumber,
-        //   rowsPerPage: data.rowsPerPage
-        // }
+        state.data = data as Event[];
       })
       .catch((error: AxiosError) => {
         Notify.create({

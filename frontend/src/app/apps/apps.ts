@@ -8,15 +8,29 @@ interface User {
   fullName: string,
 }
 
+interface Sensor {
+  _id?: string,
+  deviceId: string,
+  sensorId: string,
+}
+
+interface Confines {
+  _id?: string,
+  confine: string,
+  value: number,
+}
+
+interface Job {
+  _id?: string,
+  jobType: string,
+  jobInfo: string,
+}
+
 interface App {
   _id?: string,
-  name: string,
-  utmSource: string,
-  userId?: number,
-  cards: string[],
-  user: string | User,
-  mfoService?: number,
-  propertyId?: number,
+  sensorId: string | Sensor,
+  confines: Confines[],
+  jobs: Job[],
 }
 
 
@@ -93,7 +107,7 @@ const postbacksSumm = computed<string | undefined>(() => {
 export const useApps = () => {
   const getApps = (): void => {
     state.isLoading = true;
-    api.get('/card/apps')
+    api.get('/triggers')
       .then((data) => {
         state.apps = data.data as Array<App>
       })
@@ -132,7 +146,7 @@ export const useApps = () => {
 
   const setCurrentApp = (app: App): void => {
     state.isCurrentLoading = true;
-    api.get(`/card/apps/${app._id || ''}`)
+    api.get(`/triggers/${app._id || ''}`)
       .then((data) => {
         state.currentApp = data.data as App
       })
@@ -150,20 +164,16 @@ export const useApps = () => {
 
   const setCurrentAppEmpty = (): void => {
     state.currentApp = {
-      name: '',
-      utmSource: '',
-      userId: undefined,
-      cards: [],
-      user: '',
-      mfoService: undefined,
-      propertyId: undefined,
+      sensorId: '',
+      confines: [],
+      jobs: [],
     }
   }
 
   const saveCurrent = (): void => {
     if (!state.currentApp?._id) {
       state.isLoading = true;
-      api.post('/card/apps/', state.currentApp)
+      api.post('/triggers', state.currentApp)
         .then(() => {
           getApps();
         })
@@ -175,7 +185,7 @@ export const useApps = () => {
         })
     } else {
       state.isLoading = true;
-      api.post(`/card/apps/${state.currentApp._id}`, state.currentApp)
+      api.put(`/triggers/${state.currentApp._id}`, state.currentApp)
         .then(() => {
           getApps();
         })
