@@ -13,23 +13,23 @@ interface User {
 interface UserState {
   isLoading: boolean;
   isCurrentLoading: boolean;
-  users?: User[];
+  users: User[];
   currentUser?: User;
 }
 
 const state = reactive<UserState>({
   isLoading: false,
   isCurrentLoading: false,
-  users: undefined,
+  users: [],
   currentUser: undefined,
 })
 
 export const useUsers = () => {
   const getUsers = (): void => {
     state.isLoading = true;
-    api.get<Array<User>>('/user')
+    api.get('/user')
       .then((data) => {
-        state.users = data.data
+        state.users = data.data as Array<User>
       })
       .catch((error) => {
         console.log(error)
@@ -71,8 +71,7 @@ export const useUsers = () => {
         .catch((error: AxiosError) => {
           Notify.create({
             type: 'negative',
-            message: `${error?.message ||'Неожиданная ошибка'}`,
-            position: 'bottom-right'
+            message: `${error?.message || 'Неожиданная ошибка'}`
           })
           console.log(error)
         })
@@ -88,8 +87,7 @@ export const useUsers = () => {
         .catch((error: AxiosError) => {
           Notify.create({
             type: 'negative',
-            message: `${error.message ||'Неожиданная ошибка'}`,
-            position: 'bottom-right'
+            message: `${error.message || 'Неожиданная ошибка'}`
           })
           console.log(error)
         })

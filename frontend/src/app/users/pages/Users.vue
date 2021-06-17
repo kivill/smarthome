@@ -59,19 +59,6 @@
               <q-input v-model="currentUser.password" label="Пароль" />
             </div>
           </div>
-          <div class="row">
-            <div class="col">
-              <q-select
-                dense
-                v-model="currentUser.roles"
-                :options="typeAuth"
-                option-value="value"
-                option-label="label"
-                emit-value
-                map-options
-              ></q-select>
-            </div>
-          </div>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -97,8 +84,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
-import { useUsers } from '../modules/users';
-import { useAuth } from '../modules/auth';
+import { useUsers } from '../users';
 interface User {
   _id?: string;
   fullName: string;
@@ -117,7 +103,6 @@ export default defineComponent({
       saveCurrentUser,
       currentUser,
     } = useUsers();
-    const { typeAuth } = useAuth();
     const columns = [
       {
         name: '_id',
@@ -165,7 +150,6 @@ export default defineComponent({
         page: 1,
         rowsPerPage: 0,
       },
-      typeAuth,
     };
   },
 });

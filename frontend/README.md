@@ -2,10 +2,6 @@
 
 A Quasar Framework app
 
-## Install Quasar
-```bash
-npm install -g @quasar/cli
-```
 ## Install the dependencies
 ```bash
 npm install

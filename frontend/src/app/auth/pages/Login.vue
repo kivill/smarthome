@@ -30,7 +30,7 @@
 <script lang="ts">
 import { defineComponent, reactive, toRefs } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuth } from '../modules/auth';
+import { useAuth } from '../../app-modules';
 interface LoginPayload {
   email: string;
   password: string;
@@ -45,7 +45,7 @@ export default defineComponent({
     const router = useRouter();
     const submit = async () => {
       await auth(payload);
-      await router.push({ name: 'home' });
+      await router.push({ name: 'spendings_by_card' });
     };
     return {
       logout,

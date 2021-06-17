@@ -6,7 +6,7 @@ import {
   createWebHistory,
 } from 'vue-router';
 import routes from './routes';
-import { useAuth } from '../modules/auth';
+import { useAuth } from '../app/app-modules';
 
 /*
  * If not building with SSR mode, you can
@@ -37,11 +37,8 @@ export default route(function (/* { store, ssrContext } */) {
       process.env.MODE === 'ssr' ? void 0 : process.env.VUE_ROUTER_BASE
     ),
   });
-  const { isLoggedIn, canOpenSide } = useAuth();
+  const { isLoggedIn } = useAuth();
   Router.beforeEach((to, from, next) => {
-    if (to.name !== 'map')
-      canOpenSide.value = false
-    else canOpenSide.value = true
     if (to.name !== 'login' && !isLoggedIn.value) {
       next({ name: 'login' })
     }

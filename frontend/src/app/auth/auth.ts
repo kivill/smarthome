@@ -13,7 +13,6 @@ interface User {
 interface AuthState {
   isLoading: boolean;
   user?: User;
-  canOpenSide: boolean;
 }
 
 interface LoginPayload {
@@ -23,8 +22,7 @@ interface LoginPayload {
 
 const state = reactive<AuthState>({
   isLoading: false,
-  user: undefined,
-  canOpenSide: true,
+  user: undefined
 })
 
 const userInfo = computed<User | undefined>(() => state?.user)
@@ -65,8 +63,7 @@ export const useAuth = () => {
       .catch((error: AxiosError) => {
         Notify.create({
           type: 'negative',
-          message: `${error?.message || 'Неожиданная ошибка'}`,
-          position: 'bottom-right'
+          message: `${error?.message ||'Неожиданная ошибка'}`
         })
         localStorage.removeItem('token')
         return Promise.reject()
@@ -90,24 +87,6 @@ export const useAuth = () => {
     }
     return false
   }
-  const typeAuth = [
-    {
-      label: "Директор",
-      value: 'admin',
-    },
-    {
-      label: "Администратор",
-      value: 'helper',
-    },
-    {
-      label: 'Пользователь',
-      value: 'user',
-    },
-    {
-      label: 'Догфрендли',
-      value: 'legal'
-    }
-  ]
 
   return {
     setUser,
@@ -117,7 +96,6 @@ export const useAuth = () => {
     userRoles,
     hasPermisson,
     isLoggedIn,
-    typeAuth,
     ...toRefs(state)
   }
 }
