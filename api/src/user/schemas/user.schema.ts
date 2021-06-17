@@ -10,7 +10,6 @@ export type UserDocument = User & Document;
 @Schema({
     versionKey: false,
     timestamps: true,
-    discriminatorKey: 'roles',
 })
 export class User {
     _id: MongooseSchema.Types.ObjectId;
@@ -39,8 +38,7 @@ export class User {
 
     @Prop({
         default: 'user',
-        enum: ['admin', 'helper', 'user', 'legal'],
-        required: [true, 'PASSWORD_IS_BLANK']
+        enum: ['admin', 'user']
     })
     roles: string;
 }

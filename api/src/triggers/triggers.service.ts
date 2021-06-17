@@ -39,7 +39,7 @@ export class TriggersService {
     const trigger = await this.triggerModel.findOne({ _id: id })
     console.log(trigger);
     if (!trigger) {
-      throw new NotFoundException('Point not found.');
+      throw new NotFoundException('Trigger not found.');
     }
     return trigger;
   }
@@ -47,7 +47,7 @@ export class TriggersService {
   async update(id: string, updateTriggerDto: UpdateTriggerDto) {
     const trigger = await this.triggerModel.findOne({ _id: id })
     if (!trigger) {
-      throw new NotFoundException('Point not found.');
+      throw new NotFoundException('Trigger not found.');
     }
     return await this.triggerModel.findByIdAndUpdate(id, {$set: updateTriggerDto}, {
       useFindAndModify: true, new: true

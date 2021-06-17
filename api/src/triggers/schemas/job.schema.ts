@@ -22,7 +22,7 @@ export class Job {
 
     @Prop({
         maxlength: 255,
-        required: [true, 'ADDRESS_IS_BLANK']
+        required: [true, 'TYPE_IS_BLANK']
     })
     type: string;
 }
