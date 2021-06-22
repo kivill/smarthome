@@ -3,18 +3,6 @@ import { api } from 'boot/axios'
 import { AxiosError } from 'axios'
 import { Notify } from 'quasar'
 
-interface User {
-  _id?: string,
-  reading: number,
-}
-interface Event {
-  type: string;
-  createdAt: Date;
-  sensorReadingId: User;
-  // requestData?: any;
-  // eventData?: any
-}
-
 
 interface Filter {
   events: string[];
@@ -36,6 +24,16 @@ interface PaginationProp {
 interface ServerAns extends Pagination {
   events: Event[],
 }
+interface User {
+  _id?: string,
+  reading: number,
+}
+interface Event {
+  type: string;
+  createdAt: Date;
+  sensorReadingId: User;
+}
+
 interface EventsState {
   isLoading: boolean;
   data: Event[];

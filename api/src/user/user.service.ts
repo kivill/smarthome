@@ -51,6 +51,7 @@ export class UserService {
             throw new NotFoundException('User not found.');
         }
         User.roles = user.roles;
+        User.fullName = user.fullName;
         User.email = user.email;
         User.password = user.password;
         await User.save();

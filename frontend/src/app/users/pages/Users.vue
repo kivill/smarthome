@@ -13,26 +13,15 @@
       </template>
       <template v-slot:header="props">
         <q-tr :props="props">
-          <q-th v-for="col in props.cols" :key="col.name" :props="props">
-            {{ col.label }}
-          </q-th>
+          <q-th v-for="col in props.cols" :key="col.name" :props="props">{{ col.label }}</q-th>
           <q-th auto-width />
         </q-tr>
       </template>
       <template v-slot:body="props">
         <q-tr :props="props">
-          <q-td v-for="col in props.cols" :key="col.name" :props="props">
-            {{ col.value }}
-          </q-td>
+          <q-td v-for="col in props.cols" :key="col.name" :props="props">{{ col.value }}</q-td>
           <q-td auto-width>
-            <q-btn
-              size="sm"
-              color="primary"
-              round
-              dense
-              @click="edit(props.row)"
-              icon="create"
-            />
+            <q-btn size="sm" color="primary" round dense @click="edit(props.row)" icon="create" />
           </q-td>
         </q-tr>
       </template>
@@ -45,7 +34,7 @@
               <q-input
                 v-model="currentUser.fullName"
                 label="ФИО"
-                :disable="currentUser._id ? true : false"
+                :disable="currentUser._id ? false : false"
               />
             </div>
           </div>
@@ -62,20 +51,8 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn
-            flat
-            label="Отменить"
-            color="red"
-            @click="setCurrentUserEmpty"
-            v-close-popup
-          />
-          <q-btn
-            flat
-            label="Сохранить"
-            color="green"
-            @click="saveCurrentUser"
-            v-close-popup
-          />
+          <q-btn flat label="Отменить" color="red" @click="setCurrentUserEmpty" v-close-popup />
+          <q-btn flat label="Сохранить" color="green" @click="saveCurrentUser" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
