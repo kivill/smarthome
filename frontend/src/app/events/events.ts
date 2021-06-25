@@ -21,9 +21,6 @@ interface PaginationProp {
   pagination: Pagination
 }
 
-interface ServerAns extends Pagination {
-  events: Event[],
-}
 interface User {
   _id?: string,
   reading: number,

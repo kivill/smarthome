@@ -1,13 +1,7 @@
-import { reactive, computed, toRefs } from 'vue'
+import { reactive, toRefs } from 'vue'
 import { api } from 'boot/axios'
 import { AxiosError } from 'axios'
 import { Notify } from 'quasar'
-
-interface User {
-  _id?: string,
-  fullName: string,
-}
-
 interface Sensor {
   _id?: string,
   deviceId: string,

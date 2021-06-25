@@ -1,5 +1,5 @@
 import { reactive, computed, toRefs } from 'vue'
-import { api, baseURL } from 'boot/axios'
+import { api } from 'boot/axios'
 import { AxiosError } from 'axios'
 import { date, Notify } from 'quasar'
 
