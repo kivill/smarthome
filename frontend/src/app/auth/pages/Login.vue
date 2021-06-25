@@ -34,7 +34,7 @@ export default defineComponent({
     const router = useRouter();
     const submit = async () => {
       await auth(payload);
-      await router.push({ name: 'stats' });
+      await router.push({ name: 'readings' });
     };
     return {
       logout,

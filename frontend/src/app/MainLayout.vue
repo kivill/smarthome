@@ -8,13 +8,13 @@
         </div>
         <span v-if="isLoggedIn">
           <span v-if="hasPermisson('admin')">
-            <q-btn stretch flat to="/stats" label="Показания сенсоров" />
+            <q-btn stretch flat to="/readings" label="Показания сенсоров" />
             <q-btn stretch flat to="/events" label="События" />
             <q-btn stretch flat to="/users" label="Пользователи" />
-            <q-btn stretch flat to="/apps" label="Триггеры" />
+            <q-btn stretch flat to="/triggers" label="Триггеры" />
           </span>
           <span v-if="hasPermisson('user')">
-            <q-btn stretch flat to="/stats" label="Показания сенсоров" />
+            <q-btn stretch flat to="/readings" label="Показания сенсоров" />
             <q-btn stretch flat to="/events" label="События" />
           </span>
           <q-btn stretch flat @click="logout" to="/login">Выход</q-btn>

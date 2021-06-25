@@ -88,37 +88,6 @@
                   :series="computedSeries(stat).value"
                 ></apexchart>
               </div>
-              <!-- <div class="col">
-                <q-table
-                  title="Приложения"
-                  :rows="stat.table"
-                  :columns="columns"
-                  row-key="_id"
-                  dense
-                  :pagination="initialPagination"
-                >
-                  <template v-slot:header="props">
-                    <q-tr :props="props">
-                      <q-th v-for="col in props.cols" :key="col.name" :props="props">{{ col.label }}</q-th>
-                      <q-th auto-width>Профит</q-th>
-                      <q-th auto-width>Цена установки</q-th>
-                      <q-th auto-width>ROI</q-th>
-                      <q-th auto-width>LTV1</q-th>
-                      <q-th auto-width>LTV30</q-th>
-                    </q-tr>
-                  </template>
-                  <template v-slot:body="props">
-                    <q-tr :props="props">
-                      <q-td v-for="col in props.cols" :key="col.name" :props="props">{{ col.value }}</q-td>
-                      <q-td auto-width>{{ (props.row.income - props.row.expenses).toFixed(2) }}</q-td>
-                      <q-td auto-width>{{ computedInstallCost(props.row).value }}</q-td>
-                      <q-td auto-width>{{ computedROI(props.row).value }}%</q-td>
-                      <q-td auto-width>{{ computedLTV1(props.row).value }} руб.</q-td>
-                      <q-td auto-width>{{ computedLTV30(index, props.rowIndex).value }} руб.</q-td>
-                    </q-tr>
-                  </template>
-                </q-table>
-              </div>-->
             </div>
           </q-card-section>
         </q-card>
@@ -130,8 +99,8 @@
 <script lang="ts">
 import { defineComponent, Component, computed } from 'vue';
 import { date } from 'quasar';
-import { useGoogleAnalytics } from '../analytics';
-import { useApps } from '../../app-modules';
+import { useSensors } from '../readings';
+import { useTriggers } from '../../app-modules';
 import VueApexCharts from 'vue3-apexcharts';
 interface row {
   date: Date;
@@ -144,18 +113,11 @@ export default defineComponent({
     apexchart: VueApexCharts as Component,
   },
   setup() {
-    const {
-      getAnalyticsStats,
-      getOldAnalyticsStats,
-      stats,
-      filter,
-      computedSeries,
-      computedChartOptions,
-      // computedLTV30,
-    } = useGoogleAnalytics();
-    const { getApps, apps } = useApps();
+    const { getReadings, stats, filter, computedSeries, computedChartOptions } =
+      useSensors();
+    const { getTriggers, apps } = useTriggers();
     // getApps();
-    getAnalyticsStats();
+    getReadings();
     const computedInstallCost = (row: row) => {
       return computed(() => {
         if (row.installs) {
@@ -185,52 +147,12 @@ export default defineComponent({
         }
       });
     };
-    const event_names = [
-      'first_open',
-      'notification_receive',
-      'notification_open',
-      'purchase',
-    ];
-    const columns = [
-      {
-        name: 'date',
-        field: (row: row) => row.date,
-        label: 'Время прихода',
-        align: 'left',
-        format: (val: Date) => {
-          return date.formatDate(val, 'YYYY-MM-DD');
-        },
-      },
-      {
-        name: 'expenses',
-        field: 'expenses',
-        label: 'Расходы',
-        align: 'left',
-      },
-      {
-        name: 'income',
-        field: 'income',
-        label: 'Доходы',
-        align: 'left',
-      },
-      {
-        name: 'installs',
-        field: 'installs',
-        label: 'Установки',
-        align: 'left',
-      },
-    ];
     return {
-      columns,
       apps,
-      event_names,
       stats,
       filter,
       computedSeries,
       computedChartOptions,
-      getAnalyticsStats,
-      getOldAnalyticsStats,
-      // computedLTV30,
       computedInstallCost,
       computedROI,
       computedLTV1,

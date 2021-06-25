@@ -32,7 +32,7 @@ export class TriggersService {
   }
 
   async findJobs() {
-    return await this.jobModel.find().populate('sensorReadingId', { _id: 1, reading: 1 });
+    return await this.jobModel.find().populate('sensorReadingId');
   }
 
   async findOne(id: string) {

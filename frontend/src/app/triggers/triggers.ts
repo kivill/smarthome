@@ -33,21 +33,6 @@ interface App {
   jobs: Job[],
 }
 
-
-interface Postback {
-  _id: string;
-  sum: number;
-}
-
-interface AppSpendings {
-  _id: string,
-  name: string,
-  cards: string[],
-  amount: number,
-  postbacks: Postback[];
-  user_info?: User
-}
-
 interface Filter {
   appId?: string[],
   userId?: string[],
@@ -59,8 +44,7 @@ interface AppsState {
   isCurrentLoading: boolean;
   isAppSpendingsLoading: boolean,
   apps?: App[];
-  currentApp?: App;
-  appSpendings?: AppSpendings[];
+  currentTrigger?: App;
   filter: Filter;
 }
 
@@ -69,8 +53,7 @@ const state = reactive<AppsState>({
   isCurrentLoading: false,
   isAppSpendingsLoading: false,
   apps: undefined,
-  currentApp: undefined,
-  appSpendings: undefined,
+  currentTrigger: undefined,
   filter: {
     appId: undefined,
     userId: undefined,
@@ -79,33 +62,8 @@ const state = reactive<AppsState>({
   },
 })
 
-const spendingsSumm = computed<string | undefined>(() => state?.appSpendings?.map(a => a.amount).reduce((a, b) => a + b, 0).toFixed(2))
-
-const postbacksSumm = computed<string | undefined>(() => {
-  const arr = state?.appSpendings?.map(a => a.postbacks)
-  const tmp: { [k: string]: number } = {};
-  if (arr) {
-    for (const a of arr) {
-      for (const s of a) {
-        if (tmp.hasOwnProperty(s._id)) {
-          tmp[s._id] += s.sum
-        } else {
-          tmp[s._id] = s.sum
-        }
-      }
-    }
-    let s = ''
-    for (const [key, value] of Object.entries(tmp)) {
-      s = s.concat(value.toString(), ' ', key, ', ')
-    }
-    return s.slice(0, s.length - 2)
-  } else {
-    return '0'
-  }
-})
-
-export const useApps = () => {
-  const getApps = (): void => {
+export const useTriggers = () => {
+  const getTriggers = (): void => {
     state.isLoading = true;
     api.get('/triggers')
       .then((data) => {
@@ -123,32 +81,11 @@ export const useApps = () => {
       })
   }
 
-  const getAppsSpendings = (): void => {
-    state.isAppSpendingsLoading = true;
-    const params = {
-      ...state.filter,
-    }
-    api.get('/card/spendings/by_apps', { params })
-      .then((data) => {
-        state.appSpendings = data.data as Array<AppSpendings>;
-      })
-      .catch((error: AxiosError) => {
-        Notify.create({
-          type: 'negative',
-          message: `${error?.message ||'Неожиданная ошибка'}`
-        })
-        console.log(error)
-      })
-      .finally(() => {
-        state.isAppSpendingsLoading = false;
-      })
-  }
-
-  const setCurrentApp = (app: App): void => {
+  const setCurrentTrigger = (app: App): void => {
     state.isCurrentLoading = true;
     api.get(`/triggers/${app._id || ''}`)
       .then((data) => {
-        state.currentApp = data.data as App
+        state.currentTrigger = data.data as App
       })
       .catch((error: AxiosError) => {
         Notify.create({
@@ -162,8 +99,8 @@ export const useApps = () => {
       })
   }
 
-  const setCurrentAppEmpty = (): void => {
-    state.currentApp = {
+  const setCurrentTriggerEmpty = (): void => {
+    state.currentTrigger = {
       sensorId: '',
       confines: [],
       jobs: [],
@@ -171,11 +108,11 @@ export const useApps = () => {
   }
 
   const saveCurrent = (): void => {
-    if (!state.currentApp?._id) {
+    if (!state.currentTrigger?._id) {
       state.isLoading = true;
-      api.post('/triggers', state.currentApp)
+      api.post('/triggers', state.currentTrigger)
         .then(() => {
-          getApps();
+          getTriggers();
         })
         .catch((error) => {
           console.log(error)
@@ -185,9 +122,9 @@ export const useApps = () => {
         })
     } else {
       state.isLoading = true;
-      api.put(`/triggers/${state.currentApp._id}`, state.currentApp)
+      api.put(`/triggers/${state.currentTrigger._id}`, state.currentTrigger)
         .then(() => {
-          getApps();
+          getTriggers();
         })
         .catch((error) => {
           console.log(error)
@@ -199,13 +136,10 @@ export const useApps = () => {
   }
 
   return {
-    getApps,
-    getAppsSpendings,
-    setCurrentApp,
-    setCurrentAppEmpty,
+    getTriggers,
+    setCurrentTrigger,
+    setCurrentTriggerEmpty,
     saveCurrent,
-    spendingsSumm,
-    postbacksSumm,
     ...toRefs(state),
   }
 }
