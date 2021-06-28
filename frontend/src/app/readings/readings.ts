@@ -16,23 +16,13 @@ interface Sensor {
   readings: Readings[];
 }
 
-interface Filter {
-  from: Date,
-  to: Date,
-}
-
-interface AnalyticsState {
+interface SensorsState {
   isLoading: boolean;
-  filter: Filter;
   stats: Sensor[];
 }
 
-const state = reactive<AnalyticsState>({
+const state = reactive<SensorsState>({
   isLoading: false,
-  filter: {
-    from: date.startOfDate(date.subtractFromDate(new Date(), { days: 7 }), 'day', true),
-    to: date.startOfDate(new Date(), 'day', true),
-  },
   stats: [],
 })
 
@@ -87,7 +77,7 @@ const computedChartOptions = (x: Sensor) => {
 export const useSensors = () => {
   const getReadings = (): void => {
     state.isLoading = true;
-    api.get('/sensors', { params: state.filter })
+    api.get('/sensors')
       .then((data) => {
         state.stats = data.data as Sensor[]
       })

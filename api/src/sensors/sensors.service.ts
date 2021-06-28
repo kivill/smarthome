@@ -18,7 +18,7 @@ export class SensorsService {
   ) { }
 
   async findAll() {
-    return await this.sensorModel.aggregate([
+    const readings = await this.sensorModel.aggregate([
       { $lookup: {
         from: 'sensorreadings',
         as: 'readings',
@@ -27,11 +27,15 @@ export class SensorsService {
           { $match: {
             $expr: { $eq: [ '$sensorId', '$$sensorId' ] }
           } },
-          { $sort: { createdAt: 1 } },
+          { $sort: { createdAt: -1 } },
           { $limit: 100 }
         ]
       } }
     ])
+    for (const reading of readings) {
+      reading.readings = reading.readings.reverse();
+    }
+    return readings;
   }
 
   async findOne(data: GetSensorDataDto) {

@@ -20,40 +20,25 @@ interface Job {
   jobInfo: string,
 }
 
-interface App {
+interface Trigger {
   _id?: string,
   sensorId: string | Sensor,
   confines: Confines[],
   jobs: Job[],
 }
 
-interface Filter {
-  appId?: string[],
-  userId?: string[],
-  from?: Date,
-  to?: Date,
-}
-interface AppsState {
+interface TriggersState {
   isLoading: boolean;
   isCurrentLoading: boolean;
-  isAppSpendingsLoading: boolean,
-  apps?: App[];
-  currentTrigger?: App;
-  filter: Filter;
+  triggers: Trigger[];
+  currentTrigger?: Trigger;
 }
 
-const state = reactive<AppsState>({
+const state = reactive<TriggersState>({
   isLoading: false,
   isCurrentLoading: false,
-  isAppSpendingsLoading: false,
-  apps: undefined,
+  triggers: [],
   currentTrigger: undefined,
-  filter: {
-    appId: undefined,
-    userId: undefined,
-    from: undefined,
-    to: undefined,
-  },
 })
 
 export const useTriggers = () => {
@@ -61,7 +46,7 @@ export const useTriggers = () => {
     state.isLoading = true;
     api.get('/triggers')
       .then((data) => {
-        state.apps = data.data as Array<App>
+        state.triggers = data.data as Array<Trigger>
       })
       .catch((error: AxiosError) => {
         Notify.create({
@@ -75,11 +60,11 @@ export const useTriggers = () => {
       })
   }
 
-  const setCurrentTrigger = (app: App): void => {
+  const setCurrentTrigger = (trigger: Trigger): void => {
     state.isCurrentLoading = true;
-    api.get(`/triggers/${app._id || ''}`)
+    api.get(`/triggers/${trigger._id || ''}`)
       .then((data) => {
-        state.currentTrigger = data.data as App
+        state.currentTrigger = data.data as Trigger
       })
       .catch((error: AxiosError) => {
         Notify.create({
@@ -116,7 +101,8 @@ export const useTriggers = () => {
         })
     } else {
       state.isLoading = true;
-      api.put(`/triggers/${state.currentTrigger._id}`, state.currentTrigger)
+      api.put(`/triggers/${state.currentTrigger._id}`,
+       state.currentTrigger)
         .then(() => {
           getTriggers();
         })

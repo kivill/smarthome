@@ -84,6 +84,14 @@ export class TriggersService {
           value: Number.parseInt(job.jobInfo.toString())
         })
         await  this.jobModel.create({sensorReadingId: sensorReading, type: job.jobType})
+      }
+      if (job.jobType == 'squeaker') {
+        this.client.emit('esp32/input', {
+          deviceId: 'ESP32_1',
+          sensorId: 'squeaker',
+          value: Number.parseInt(job.jobInfo.toString())
+        })
+        await  this.jobModel.create({sensorReadingId: sensorReading, type: job.jobType})
       } 
     }
   }

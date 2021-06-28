@@ -98,9 +98,7 @@
 
 <script lang="ts">
 import { defineComponent, Component, computed } from 'vue';
-import { date } from 'quasar';
 import { useSensors } from '../readings';
-import { useTriggers } from '../../app-modules';
 import VueApexCharts from 'vue3-apexcharts';
 interface row {
   date: Date;
@@ -113,10 +111,8 @@ export default defineComponent({
     apexchart: VueApexCharts as Component,
   },
   setup() {
-    const { getReadings, stats, filter, computedSeries, computedChartOptions } =
+    const { getReadings, stats, computedSeries, computedChartOptions } =
       useSensors();
-    const { getTriggers, apps } = useTriggers();
-    // getApps();
     getReadings();
     const computedInstallCost = (row: row) => {
       return computed(() => {
@@ -148,9 +144,7 @@ export default defineComponent({
       });
     };
     return {
-      apps,
       stats,
-      filter,
       computedSeries,
       computedChartOptions,
       computedInstallCost,

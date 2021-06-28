@@ -3,7 +3,7 @@
     <q-table
       :loading="isLoading"
       title="Триггеры"
-      :rows="apps"
+      :rows="triggers"
       :columns="columns"
       row-key="_id"
       :pagination="initialPagination"
@@ -111,7 +111,7 @@
                   <q-select
                     dense
                     v-model="currentTrigger.jobs[index].jobType"
-                    :options="['light']"
+                    :options="['light', 'squeaker']"
                     label="Команда"
                   />
                 </div>
@@ -143,7 +143,6 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { useTriggers } from '../triggers';
-import { useUsers } from '../../app-modules';
 import { useAuth } from '../../app-modules';
 import { useSensors } from '../../app-modules';
 
@@ -171,13 +170,6 @@ interface App {
   confines: Confines[];
   jobs: Job[];
 }
-interface User {
-  _id?: string;
-  fullName: string;
-}
-interface Row {
-  user: User;
-}
 export default defineComponent({
   name: 'Triggers',
   setup() {
@@ -185,13 +177,12 @@ export default defineComponent({
       getTriggers,
       isLoading,
       isCurrentLoading,
-      apps,
+      triggers,
       currentTrigger,
       setCurrentTrigger,
       setCurrentTriggerEmpty,
       saveCurrent,
     } = useTriggers();
-    const { getUsers, users } = useUsers();
     const { getReadings, stats } = useSensors();
     const { hasPermisson } = useAuth();
     getReadings();
@@ -228,7 +219,7 @@ export default defineComponent({
       modal.value = true;
     };
     return {
-      apps,
+      triggers,
       stats,
       columns,
       isLoading,
@@ -240,7 +231,6 @@ export default defineComponent({
       setCurrentTrigger,
       setCurrentTriggerEmpty,
       saveCurrent,
-      users,
       hasPermisson,
       initialPagination: {
         sortBy: 'desc',
